@@ -5,10 +5,10 @@
     } 
 $username=$_POST['username'];
 $userpw=$_POST['userpw'];
-if('PW' == $userpw and 'ID' == $username)
+if('g2820480' == $userpw and 'khuphj@gmail.com' == $username)
 {
-	echo"<script>alert('로그인 성공');location.href='../admin/pages/tables/userinfo.php';</script>";
-	$_SESSION['name'] = 'admin';
+	echo"<script>alert('로그인 성공');location.href='../admin/pages/tables/post.php';</script>";
+	$_SESSION['name'] = '박형준';
 }
 else
 {
