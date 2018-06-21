@@ -5,9 +5,9 @@
     } 
 $username=$_POST['username'];
 $userpw=$_POST['userpw'];
-if('khuphj@gmail.com' == $userpw and 'g2820480' == $username)
+if('PW' == $userpw and 'ID' == $username)
 {
-	echo"<script>alert('어드민이시네요');location.href='../admin/pages/tables/userinfo.php';</script>";
+	echo"<script>alert('로그인 성공');location.href='../admin/pages/tables/userinfo.php';</script>";
 	$_SESSION['name'] = 'admin';
 }
 else
