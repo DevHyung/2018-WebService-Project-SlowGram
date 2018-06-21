@@ -1,0 +1,25 @@
+﻿<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+	<div class="container-fluid">
+	  <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	  </button>
+	  <font class="brand">VOILA ADMIN</font>
+	  <div class="nav-collapse collapse">
+		<p class="navbar-text pull-right">
+		   <a href="../../logout.php" class="navbar-link">Logout</a>
+		</p>
+
+		<ul class="nav">
+		  <li class="<?if($top==1)echo 'active ';?>nav_top_btn"><a href="../user/summary.php">회원관리</a></li>
+		  <li class="<?if($top==2)echo 'active ';?>nav_top_btn"><a href="../adv/summary.php">광고관리</a></li>
+		  <li class="<?if($top==3)echo 'active ';?>nav_top_btn"><a href="../pref/servicePolicy.php">기본설정</a></li>
+		  <li class="<?if($top==4)echo 'active ';?>nav_top_btn"><a href="../stat/statusBoard.php">통계</a></li>
+		</ul>
+
+	  </div><!--/.nav-collapse -->
+	</div>
+  </div>
+</div>
