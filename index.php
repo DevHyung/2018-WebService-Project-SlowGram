@@ -8,7 +8,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>RSK어드민</title>
+    <title>SLOW GRAM</title>
 
     <meta name="description" content="">
     <meta name="author" content="">
@@ -66,7 +66,7 @@ document.form2
     <div class="container">
       <div class="form-signin" action ="">
         <center>
-        <h2 class="form-signin-heading">RSK ADMIN</h2>
+        <h2 class="form-signin-heading">SLOW GRAM</h2>
         </center>
         <form id="form2" name="form2" action="./DB/logincheck.php" method="POST">
            <center><input type="text" class="input-block-level" name="username" style="margin-top: 30px; width:300px;" placeholder="ID"></center>
