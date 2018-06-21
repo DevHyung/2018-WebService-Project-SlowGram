@@ -10,20 +10,18 @@ if(!isset($_SESSION['name'])) {
 }
   $name = $_SESSION['name'];
   require_once("../../../DB/dbconfig.php");
-  $sql="SELECT * FROM post";
+  $sql="SELECT * FROM post WHERE isPost='y' or isPost='f'";
   $query = mysqli_query($db,$sql);
   //
-
-  $sql2 = "SELECT count(*) FROM rsk.user_info where joinDate = curdate();";
+  $sql2 = "SELECT stamp FROM user where username = '$name'";
   $query2 = mysqli_query($db,$sql2);
-  $row2=mysqli_fetch_array($query2);
-  $newcount = (int)$row2['count(*)'];
+  $row=mysqli_fetch_array($query2);
+  $newcount = (int)$row['stamp']; 
 
-  $sql3 = "SELECT count(*) FROM rsk.transaction where isApproval = 'n'";
+  $sql3="SELECT count(*) FROM post WHERE isPost='n'";
   $query3 = mysqli_query($db,$sql3);
-  $row3=mysqli_fetch_array($query3);
-  $newtransaction = (int)$row3['count(*)'];
-  
+  $row=mysqli_fetch_array($query3);
+  $newcount3= (int)$row['count(*)']; 
 ?>
 <!DOCTYPE html>
 <html>
@@ -58,12 +56,12 @@ if(!isset($_SESSION['name'])) {
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini" onload="startTime()">
 <div class="wrapper">
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="./userinfo.php" class="logo">
+    <a href="./post.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>A</b>LT</span>
       <!-- logo for regular state and mobile devices -->
@@ -80,26 +78,50 @@ if(!isset($_SESSION['name'])) {
       </a>
 
       <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-           <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu" id = 'alarm'>
+        <ul class="nav navbar-nav">          
+          <li class="dropdown notifications-menu" id = 'ticket'>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning"><?php echo  $newtransaction;?></span>
+              <div id="clock"></div>
+            </a>
+          </li>
+
+
+          <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu" id = 'ticket'>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-ticket"></i>
+              <span class="label label-warning"><?php echo  $newcount;?></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have <?php echo  $newtransaction;?> notifications</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i><?php echo  $newcount;?>  new members joined today
-                    </a>
-                  </li>
                    <li>
                     <a href="#">
-                      <i class="fa fa-shopping-cart text-green"></i> <?php echo $newtransaction;?> new transaction
+                      <i class="fa fa-shopping-cart text-green"></i> <?php echo $newcount;?> 개의 우표를 소유중입니다.
+                    </a>
+                  </li>
+                 
+                </ul>
+              </li>
+              
+            </ul>
+          </li>
+           <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu" id = 'alarm'>            
+
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning"><?php echo  $newcount3;?></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have <?php echo  $newcount3;?> notifications</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                   <li>
+                    <a href="#">
+                      <i class="fa fa-shopping-cart text-green"></i> <?php echo $newcount3;?> 확인해야할 포스팅
                     </a>
                   </li>
                  
@@ -172,9 +194,8 @@ if(!isset($_SESSION['name'])) {
                 </span>
           </a>
          <ul class="treeview-menu">
-            <li><a href="./userinfo.php"><i class="fa fa-circle-o"></i>메세지</a></li>
-            <li><a href="./transaction.php"><i class="fa fa-circle-o"></i>포스팅관리</a></li>
-            <li><a href="pages/tables/status.php"><i class="fa fa-circle-o"></i>우표구매</a></li>
+            <li><a href="./postInfo.php"><i class="fa fa-circle-o"></i>포스팅관리</a></li>
+            <li><a href="./buyStamp.php"><i class="fa fa-circle-o"></i>우표구매</a></li>
           </ul>
         </li>
       </ul>
@@ -239,7 +260,11 @@ if(!isset($_SESSION['name'])) {
                           </div>
                           <!-- /.box-body -->
                           <div class="box-footer">
-                            <p style="float:right">'.$row['date'].'</p>
+                            <p style="float:right">';
+                            if ($row['isPost']=='f')
+                              echo "<b style='color:red'>우표사용 포스팅</b> ";
+
+                            echo $row['date'].'</p>
                           </div>
                       </div>
                       <!-- /.box -->
@@ -476,32 +501,45 @@ if(!isset($_SESSION['name'])) {
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
-<script> 
-  playAlert = setInterval(function() {
-   $.ajax({
-            url:'./db_get_alarm.php',
-            success:function(data){
-                $('#alarm').html(data);
-            }
-        })
-   //alert('http://webisfree.com');
-}, 5000);
-function test(name) {
-      //var s = getCmaFileInfo(obj,stype);
-      //alert(snum+"gd");
-      window.open("../../../DB/verify_yes.php?username="+name, "_blank", "left=300,width=10,height=10");
-      alert('변경되었습니다');
-      setTimeout(function () {
-        window.location.reload();
-        }
-      , 1000);
-      
-      
-      
-      //verify_yes
-  }
-</script>  
+<script type="text/javascript">
+  function startTime(){
 
+  var myDate = new Date();
+
+  var hourlaterDate = new Date(Date.parse(myDate) + 1000 * 60 * 0.3);
+  // Set the date we're counting down to
+  var countDownDate = new Date(hourlaterDate).getTime();
+
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+
+  // Get todays date and time
+  var now = new Date().getTime();
+
+  // Find the distance between now an the count down date
+  var distance = countDownDate - now;
+
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="demo"
+  document.getElementById("clock").innerHTML = hours + "h "
+  + minutes + "m " + seconds + "s ";
+
+  // If the count down is finished, write some text 
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("clock").innerHTML = "EXPIRED";
+    alert('시간이 완료되어서 로그인 화면으로 넘어갑니다.');
+    location.href='../../../index.php';
+  }
+}, 1000);
+
+}
+</script>
 <script>
   $(function () {
     $('#example1').DataTable()

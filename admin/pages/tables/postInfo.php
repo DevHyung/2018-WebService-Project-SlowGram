@@ -8,20 +8,20 @@ if(!isset($_SESSION['name'])) {
   //echo "<meta http-equiv='refresh' content='0;url=../../index.php'>";
   //exit;
 }
-$name = $_SESSION['name'];
+  $name = $_SESSION['name'];
   require_once("../../../DB/dbconfig.php");
-  $sql="SELECT * FROM user_info";
+  $sql="SELECT *, TIMESTAMPDIFF(minute,date,now()) AS DIFF FROM post WHERE id='$name' and isPost='n'";
   $query = mysqli_query($db,$sql);
-
-  $sql2 = "SELECT count(*) FROM rsk.user_info where joinDate = curdate();";
+  //
+  $sql2 = "SELECT stamp FROM user where username = '$name'";
   $query2 = mysqli_query($db,$sql2);
   $row=mysqli_fetch_array($query2);
-  $newcount = (int)$row['count(*)'];
+  $newcount = (int)$row['stamp']; 
 
-  $sql3 = "SELECT count(*) FROM rsk.transaction where isApproval = 'n'";
+  $sql3="SELECT count(*) FROM post WHERE isPost='n'";
   $query3 = mysqli_query($db,$sql3);
   $row=mysqli_fetch_array($query3);
-  $newtransaction = (int)$row['count(*)'];
+  $newcount3= (int)$row['count(*)']; 
 ?>
 <!DOCTYPE html>
 <html>
@@ -56,16 +56,16 @@ $name = $_SESSION['name'];
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini" onload="startTime()">
 <div class="wrapper">
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="./userinfo.php" class="logo" background-image=url("./logo.JPG")>
+    <a href="./post.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>A</b>LT</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"  >SLOW GRAM</span>
+      <span class="logo-lg">SLOW GRAM</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -79,25 +79,49 @@ $name = $_SESSION['name'];
 
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-          <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu" id = 'alarm'>
+
+           <li class="dropdown notifications-menu" id = 'ticket'>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning"><?php echo  $newtransaction;?></span>
+              <div id="clock"></div>
+            </a>
+          </li>
+          
+          <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu" id = 'ticket'>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-ticket"></i>
+              <span class="label label-warning"><?php echo  $newcount;?></span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have <?php echo  $newtransaction;?> notifications</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  <li>
-                    <a href="#">
-                      <i class="fa fa-users text-aqua"></i><?php echo  $newcount;?>  new members joined today
-                    </a>
-                  </li>
                    <li>
                     <a href="#">
-                      <i class="fa fa-shopping-cart text-green"></i> <?php echo $newtransaction;?> new transaction
+                      <i class="fa fa-shopping-cart text-green"></i> <?php echo $newcount;?> 개의 우표를 소유중입니다.
+                    </a>
+                  </li>
+                 
+                </ul>
+              </li>
+              
+            </ul>
+          </li>
+           <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu" id = 'alarm'>            
+
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning"><?php echo  $newcount3;?></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have <?php echo  $newcount3;?> notifications</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                   <li>
+                    <a href="#">
+                      <i class="fa fa-shopping-cart text-green"></i> <?php echo $newcount3;?> 확인해야할 포스팅
                     </a>
                   </li>
                  
@@ -116,7 +140,7 @@ $name = $_SESSION['name'];
               <li class="user-header">
                 <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                 <p>
-                  박형준
+                  <?php echo $name;?>
                 </p>
               </li>
                            <!-- Menu Footer-->
@@ -130,7 +154,6 @@ $name = $_SESSION['name'];
               </li>
             </ul>
           </li>
-          
         </ul>
       </div>
     </nav>
@@ -165,15 +188,14 @@ $name = $_SESSION['name'];
         <li class="header">MAIN NAVIGATION</li>
         <li class="treeview active">
           <a href="#">
-            <i class="fa fa-table"></i> <span>Tables</span>
+            <i class="fa fa-table"></i> <span>메뉴</span>
             <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
           </a>
          <ul class="treeview-menu">
-            <li><a href="./userinfo.php"><i class="fa fa-circle-o"></i> 회원정보</a></li>
-            <li><a href="./transaction.php"><i class="fa fa-circle-o"></i> 입금신청</a></li>
-            <li><a href="./status.php"><i class="fa fa-circle-o"></i> 기본설정</a></li>
+            <li><a href="./postInfo.php"><i class="fa fa-circle-o"></i>포스팅관리</a></li>
+            <li><a href="./buyStamp.php"><i class="fa fa-circle-o"></i>우표구매</a></li>
           </ul>
         </li>
       </ul>
@@ -186,7 +208,7 @@ $name = $_SESSION['name'];
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        회원정보
+        TIME LINE 
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -202,25 +224,18 @@ $name = $_SESSION['name'];
           
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Data Table With Full Features</h3>
+              <h3 class="box-title">쓴 글은 24시간 이후부터 발행 가능합니다.</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>User Name</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Mobile</th>
-                  <th>Email</th>
-                  <th>Funds</th>
-                  <th>Zipcode</th>
-                  <th>Country</th>
-                  <th>State</th>
-                  <th>City</th>
-                  <th>Address</th>
-                  <th>ID</th>
+                  <th>내용</th>
+                  <th>발행요청날짜</th>
+                  <th>삭제</th>
+                  <th>승인</th>
+                  <th>즉시포스팅(우표 2소모)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -228,38 +243,37 @@ $name = $_SESSION['name'];
                     while($row=mysqli_fetch_array($query))
                     {
                       echo'
-                      <tr  onClick="gonyImgWin(\''.$row['passportImg'].'\');">
-                      <td>'.$row['username'].'</td>
-                      <td>'.$row['firstname'].'</td>
-                      <td>'.$row['lastname'].'</td>
-                      <td>'.$row['mobile'].'</td>
-                      <td>'.$row['email'].'</td>
-                      <td>'.$row['funds'].'</td>
-                      <td>'.$row['zipcode'].'</td>
-                      <td>'.$row['country'].'</td>
-                      <td>'.$row['state'].'</td>
-                      <td>'.$row['city'].'</td>
-                      <td>'.$row['address'].'</td>
-                      <td>'.$row['ID'].'</td>
+                      <tr>
+                      <td>'.$row['content'].'</td>
+                      <td>'.$row['date'].'</td>';
+                      echo '<td><button onclick="del('.$row['idx'].')"class="btn btn-danger btn-sm">삭제</button></td>';
+                      if ($row['DIFF'] >= 1440){
+                        echo '<td><button onclick="gogo('.$row['idx'].')"class="btn btn-primary btn-sm">발행</button></td>';
+                      }
+                      else{
+                        echo '<td>'.(int)((1440-$row['DIFF'])/60).'시간 후 가능!</td>';
+
+                      }
+                      if ($row['DIFF'] >= 1440){
+                        echo '<td></td>';
+                      }
+                      else{
+                         echo '<td><button onclick="stamp('.$row['idx'].')"class="btn btn-primary btn-sm">우표써서 발행</button></td>
                       </tr>
                       ';
+                      }
+
+                     
                     }
                   ?>
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th>User Name</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Mobile</th>
-                  <th>Email</th>
-                  <th>Funds</th>
-                  <th>Zipcode</th>
-                  <th>Country</th>
-                  <th>State</th>
-                  <th>City</th>
-                  <th>Address</th>
-                  <th>ID</th>
+                  <th>내용</th>
+                  <th>발행요청날짜</th>
+                  <th>삭제</th>
+                  <th>승인</th>
+                  <th>즉시포스팅(우표 2소모)</th>
                 </tr>
                 </tfoot>
               </table>
@@ -470,7 +484,6 @@ $name = $_SESSION['name'];
         </form>
       </div>
       <!-- /.tab-pane -->
-      
     </div>
   </aside>
   <!-- /.control-sidebar -->
@@ -497,23 +510,89 @@ $name = $_SESSION['name'];
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 <script> 
-playAlert = setInterval(function() {
-   $.ajax({
-            url:'./db_get_alarm.php',
-            success:function(data){
-                $('#alarm').html(data);
-            }
-        })
-   //alert('http://webisfree.com');
-}, 5000);
+  function startTime(){
 
-function gonyImgWin(img){ 
-        var imgWin = window.open("","gImgWin","width=1200,height=1200,status=no,toolbar=no,scrollbars=yes,resizable=yes"); 
-        imgWin.document.write("<html><title>미리보기</title>" 
-        +"<body topmargin=0 leftmargin=0 marginheight=0 marginwidth=0>" 
-        +"<a href='javascript:self.close()''><img src='../../../../uploads/"+img+"' width=1200 height=1200 border=0></a>" 
-        +"</body></html>"); 
-} 
+  var myDate = new Date();
+
+  var hourlaterDate = new Date(Date.parse(myDate) + 1000 * 60 * 10);
+  // Set the date we're counting down to
+  var countDownDate = new Date(hourlaterDate).getTime();
+
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+
+  // Get todays date and time
+  var now = new Date().getTime();
+
+  // Find the distance between now an the count down date
+  var distance = countDownDate - now;
+
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Display the result in the element with id="demo"
+  document.getElementById("clock").innerHTML = hours + "h "
+  + minutes + "m " + seconds + "s ";
+
+  // If the count down is finished, write some text 
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("clock").innerHTML = "EXPIRED";
+    alert('시간이 완료되어서 로그인 화면으로 넘어갑니다.');
+    location.href='../../../index.php';
+  }
+}, 1000);
+
+}
+function del(num) {
+
+      //var s = getCmaFileInfo(obj,stype);
+      //alert(snum+"gd");
+      
+      window.open("../../../DB/verifyRemove.php?username="+num, "_blank", "left=300,width=10,height=10");
+      alert('삭제 되었습니다');
+
+      setTimeout(function () {
+        window.location.reload();
+        }
+      , 1000);
+      
+      
+  }
+  function gogo(num) {
+
+      //var s = getCmaFileInfo(obj,stype);
+      //alert(snum+"gd");
+      
+      window.open("../../../DB/verifyGoGo.php?username="+num, "_blank", "left=300,width=10,height=10");
+      alert('기다려서 포스팅 하셨으므로 \n우표 1개가 보상 지급되었습니다.');
+
+      setTimeout(function () {
+        window.location.reload();
+        }
+      , 1000);
+      
+      
+  }
+  function stamp(num) {
+    if (confirm("우표 2개 소비해가면서\n꼭 올리시겠습니까??") == true){    //확인
+        
+      window.open("../../../DB/verifyStamp.php?username="+num, "_blank", "left=300,width=10,height=10");
+      alert('성급하게 포스팅 하셨으므로 \n우표 2개가 차감되었습니다.');
+
+      setTimeout(function () {
+        window.location.reload();
+        }
+      , 1000);
+
+    }else{   //취소
+        alert("취소되었습니다.")
+    }
+      
+  }
 </script>  
 
 <script>

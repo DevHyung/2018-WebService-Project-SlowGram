@@ -8,20 +8,22 @@ if(!isset($_SESSION['name'])) {
   //echo "<meta http-equiv='refresh' content='0;url=../../index.php'>";
   //exit;
 }
-$name = $_SESSION['name'];
+  $name = $_SESSION['name'];
   require_once("../../../DB/dbconfig.php");
-  $sql="SELECT * FROM user_info";
+  $sql="SELECT * FROM post WHERE isPost='y' or isPost='f'";
   $query = mysqli_query($db,$sql);
+  //
 
   $sql2 = "SELECT count(*) FROM rsk.user_info where joinDate = curdate();";
   $query2 = mysqli_query($db,$sql2);
-  $row=mysqli_fetch_array($query2);
-  $newcount = (int)$row['count(*)'];
+  $row2=mysqli_fetch_array($query2);
+  $newcount = (int)$row2['count(*)'];
 
   $sql3 = "SELECT count(*) FROM rsk.transaction where isApproval = 'n'";
   $query3 = mysqli_query($db,$sql3);
-  $row=mysqli_fetch_array($query3);
-  $newtransaction = (int)$row['count(*)'];
+  $row3=mysqli_fetch_array($query3);
+  $newtransaction = (int)$row3['count(*)'];
+  
 ?>
 <!DOCTYPE html>
 <html>
@@ -61,11 +63,11 @@ $name = $_SESSION['name'];
 
   <header class="main-header">
     <!-- Logo -->
-    <a href="./userinfo.php" class="logo" background-image=url("./logo.JPG")>
+    <a href="./post.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>A</b>LT</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"  >SLOW GRAM</span>
+      <span class="logo-lg">SLOW GRAM</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -79,7 +81,7 @@ $name = $_SESSION['name'];
 
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-          <!-- Notifications: style can be found in dropdown.less -->
+           <!-- Notifications: style can be found in dropdown.less -->
           <li class="dropdown notifications-menu" id = 'alarm'>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
@@ -116,7 +118,7 @@ $name = $_SESSION['name'];
               <li class="user-header">
                 <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                 <p>
-                  박형준
+                  <?php echo $name;?>
                 </p>
               </li>
                            <!-- Menu Footer-->
@@ -130,7 +132,6 @@ $name = $_SESSION['name'];
               </li>
             </ul>
           </li>
-          
         </ul>
       </div>
     </nav>
@@ -165,15 +166,14 @@ $name = $_SESSION['name'];
         <li class="header">MAIN NAVIGATION</li>
         <li class="treeview active">
           <a href="#">
-            <i class="fa fa-table"></i> <span>Tables</span>
+            <i class="fa fa-table"></i> <span>메뉴</span>
             <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
           </a>
          <ul class="treeview-menu">
-            <li><a href="./userinfo.php"><i class="fa fa-circle-o"></i> 회원정보</a></li>
-            <li><a href="./transaction.php"><i class="fa fa-circle-o"></i> 입금신청</a></li>
-            <li><a href="./status.php"><i class="fa fa-circle-o"></i> 기본설정</a></li>
+            <li><a href="./postInfo.php"><i class="fa fa-circle-o"></i>포스팅관리</a></li>
+            <li><a href="./buyStamp.php"><i class="fa fa-circle-o"></i>우표구매</a></li>
           </ul>
         </li>
       </ul>
@@ -186,7 +186,7 @@ $name = $_SESSION['name'];
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        회원정보
+        우표구매 
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -200,71 +200,25 @@ $name = $_SESSION['name'];
       <div class="row">
         <div class="col-xs-12">
           
-          <div class="box">
-            <div class="box-header">
-              <h3 class="box-title">Data Table With Full Features</h3>
+         <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">구매</h3>
             </div>
             <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>User Name</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Mobile</th>
-                  <th>Email</th>
-                  <th>Funds</th>
-                  <th>Zipcode</th>
-                  <th>Country</th>
-                  <th>State</th>
-                  <th>City</th>
-                  <th>Address</th>
-                  <th>ID</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <?php
-                    while($row=mysqli_fetch_array($query))
-                    {
-                      echo'
-                      <tr  onClick="gonyImgWin(\''.$row['passportImg'].'\');">
-                      <td>'.$row['username'].'</td>
-                      <td>'.$row['firstname'].'</td>
-                      <td>'.$row['lastname'].'</td>
-                      <td>'.$row['mobile'].'</td>
-                      <td>'.$row['email'].'</td>
-                      <td>'.$row['funds'].'</td>
-                      <td>'.$row['zipcode'].'</td>
-                      <td>'.$row['country'].'</td>
-                      <td>'.$row['state'].'</td>
-                      <td>'.$row['city'].'</td>
-                      <td>'.$row['address'].'</td>
-                      <td>'.$row['ID'].'</td>
-                      </tr>
-                      ';
-                    }
-                  ?>
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th>User Name</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Mobile</th>
-                  <th>Email</th>
-                  <th>Funds</th>
-                  <th>Zipcode</th>
-                  <th>Country</th>
-                  <th>State</th>
-                  <th>City</th>
-                  <th>Address</th>
-                  <th>ID</th>
-                </tr>
-                </tfoot>
-              </table>
-            </div>
-            <!-- /.box-body -->
+            <!-- form start -->
+            <form role="form" method="GET" action="../../../DB/BuyStamp.php">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">수량선택</label>
+                  <input type="text" name="num" class="form-control" id="exampleInputEmail1" placeholder="Input Num" >
+                </div>
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" class="btn btn-primary" style='float:right'>구매</button>
+              </div>
+            </form>
           </div>
           <!-- /.box -->
         </div>
@@ -470,7 +424,6 @@ $name = $_SESSION['name'];
         </form>
       </div>
       <!-- /.tab-pane -->
-      
     </div>
   </aside>
   <!-- /.control-sidebar -->
@@ -497,7 +450,7 @@ $name = $_SESSION['name'];
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 <script> 
-playAlert = setInterval(function() {
+  playAlert = setInterval(function() {
    $.ajax({
             url:'./db_get_alarm.php',
             success:function(data){
@@ -506,14 +459,20 @@ playAlert = setInterval(function() {
         })
    //alert('http://webisfree.com');
 }, 5000);
-
-function gonyImgWin(img){ 
-        var imgWin = window.open("","gImgWin","width=1200,height=1200,status=no,toolbar=no,scrollbars=yes,resizable=yes"); 
-        imgWin.document.write("<html><title>미리보기</title>" 
-        +"<body topmargin=0 leftmargin=0 marginheight=0 marginwidth=0>" 
-        +"<a href='javascript:self.close()''><img src='../../../../uploads/"+img+"' width=1200 height=1200 border=0></a>" 
-        +"</body></html>"); 
-} 
+function test(name) {
+      //var s = getCmaFileInfo(obj,stype);
+      //alert(snum+"gd");
+      window.open("../../../DB/verify_yes.php?username="+name, "_blank", "left=300,width=10,height=10");
+      alert('변경되었습니다');
+      setTimeout(function () {
+        window.location.reload();
+        }
+      , 1000);
+      
+      
+      
+      //verify_yes
+  }
 </script>  
 
 <script>
