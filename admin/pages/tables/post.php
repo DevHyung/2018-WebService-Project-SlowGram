@@ -10,9 +10,9 @@ if(!isset($_SESSION['name'])) {
 }
   $name = $_SESSION['name'];
   require_once("../../../DB/dbconfig.php");
-  $sql="SELECT * FROM status where username='admin'";
+  $sql="SELECT * FROM post";
   $query = mysqli_query($db,$sql);
-  $row=mysqli_fetch_array($query);
+  //
 
   $sql2 = "SELECT count(*) FROM rsk.user_info where joinDate = curdate();";
   $query2 = mysqli_query($db,$sql2);
@@ -118,7 +118,7 @@ if(!isset($_SESSION['name'])) {
               <li class="user-header">
                 <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                 <p>
-                  Admin
+                  <?php echo $name;?>
                 </p>
               </li>
                            <!-- Menu Footer-->
@@ -166,15 +166,15 @@ if(!isset($_SESSION['name'])) {
         <li class="header">MAIN NAVIGATION</li>
         <li class="treeview active">
           <a href="#">
-            <i class="fa fa-table"></i> <span>Tables</span>
+            <i class="fa fa-table"></i> <span>메뉴</span>
             <span class="pull-right-container">
                   <i class="fa fa-angle-left pull-right"></i>
                 </span>
           </a>
          <ul class="treeview-menu">
-            <li><a href="./userinfo.php"><i class="fa fa-circle-o"></i> 회원정보</a></li>
-            <li><a href="./transaction.php"><i class="fa fa-circle-o"></i> 입금신청</a></li>
-            <li><a href="pages/tables/status.php"><i class="fa fa-circle-o"></i> 기본설정</a></li>
+            <li><a href="./userinfo.php"><i class="fa fa-circle-o"></i>메세지</a></li>
+            <li><a href="./transaction.php"><i class="fa fa-circle-o"></i>포스팅관리</a></li>
+            <li><a href="pages/tables/status.php"><i class="fa fa-circle-o"></i>우표구매</a></li>
           </ul>
         </li>
       </ul>
@@ -187,7 +187,7 @@ if(!isset($_SESSION['name'])) {
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        그래프, 통장주소
+        TIME LINE 
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -203,30 +203,19 @@ if(!isset($_SESSION['name'])) {
           
          <div class="box box-primary">
             <div class="box-header with-border">
-              <h3 class="box-title">기본설정</h3>
+              <h3 class="box-title">포스팅</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form" method="POST" action="../../..//DB/modify_status.php">
+            <form role="form" method="POST" action="../../../DB/insertPost.php">
               <div class="box-body">
-                <?php
-                echo'
-                <div class="form-group">
-                  <label for="exampleInputEmail1">Graph</label>
-                  <input type="text" name="graph" class="form-control" id="exampleInputEmail1" placeholder="Input Graph" value="'.$row['graph'].'">
+                <div class="form-group">                  
+                  <input type="text" name="content" class="form-control" id="exampleInputEmail1" placeholder="여기에 메세지를 입력해주세요" style='height:100px'>
                 </div>
-                <div class="form-group">
-                  <label for="exampleInputPassword1">btcAddress</label>
-                  <input type="text" name="btcAddress" class="form-control" id="exampleInputPassword1" placeholder="btcAddress" value="'.$row['btcAddress'].'">
-                </div>
-                ';
-                ?>
-                
               </div>
               <!-- /.box-body -->
-
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" style='float:right'>게시</button>
               </div>
             </form>
           </div>
@@ -234,7 +223,35 @@ if(!isset($_SESSION['name'])) {
         </div>
         <!-- /.col -->
       </div>
-      <!-- /.row -->
+       <?php
+          while($row=mysqli_fetch_array($query))
+            { 
+              echo'
+                  <div class="row">
+                    <div class="col-xs-12">
+                     <div class="box box-primary">
+                        <div class="box-header with-border">
+                          <h3 class="box-title"><img src="../../dist/img/'.$row['imgUrl'].'" class="img-circle" style="max-width:45px"> '.$row['id'].'</h3>
+                        </div>
+                        <!-- /.box-header -->
+                          <div class="box-body">
+                            '.$row['content'].'
+                          </div>
+                          <!-- /.box-body -->
+                          <div class="box-footer">
+                            <p style="float:right">'.$row['date'].'</p>
+                          </div>
+                      </div>
+                      <!-- /.box -->
+                    </div>
+                    <!-- /.col -->
+                  </div>
+                ';
+          }
+      ?>
+
+
+
     </section>
     <!-- /.content -->
   </div>
